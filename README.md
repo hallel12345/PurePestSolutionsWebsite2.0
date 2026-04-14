@@ -1,36 +1,106 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pure Pest Solutions 2.0 Website
 
-## Getting Started
+Production-ready Next.js website for Pure Pest Solutions, rebuilt for stronger lead generation, better UX, and cleaner long-term maintainability.
 
-First, run the development server:
+## Tech Stack
+
+- Next.js App Router + TypeScript
+- Tailwind CSS (v4)
+- Vercel-ready deployment
+- Server-side Google Places API (New) integration for reviews
+
+## Local Setup
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Create `.env.local` from `.env.example` and set:
+
+```bash
+GOOGLE_MAPS_API_KEY=your_server_side_google_maps_api_key
+GOOGLE_PLACE_ID=ChIJbwQKyHTyQ64RsMoxAg7FTwc
+```
+
+3. Run dev server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Quality Checks
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint
+npm run typecheck
+npm run build
+```
 
-## Learn More
+## Deploy to Vercel (Exact Steps)
 
-To learn more about Next.js, take a look at the following resources:
+1. Push this repository to GitHub.
+2. In Vercel, click **Add New Project**.
+3. Import `PurePestSolutionsWebsite2.0` repository.
+4. In Project Settings > Environment Variables, add:
+   - `GOOGLE_MAPS_API_KEY`
+   - `GOOGLE_PLACE_ID` with value `ChIJbwQKyHTyQ64RsMoxAg7FTwc`
+5. Deploy.
+6. After deploy, verify:
+   - Homepage quote form submits successfully.
+   - `/api/google-reviews` returns data.
+   - City/service pages are indexable and load correctly.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Important Editable Files
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Business content and text
+- `data/site-content.ts`
+  - Phone number
+  - Email
+  - Service list
+  - Service areas and cities
+  - Testimonials
+  - Hours
+  - CTA copy
+  - Social links
 
-## Deploy on Vercel
+### Brand and photo assets
+- `public/brand/logo-wordmark.png`
+- `public/brand/logo-circle.png`
+- `public/images/team-shirt.jpeg`
+- `public/images/truck-angle.jpeg`
+- `public/images/truck-building-portrait.jpeg`
+- `public/images/truck-side.jpeg`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### SEO and metadata
+- `lib/seo.ts`
+- `app/layout.tsx` (LocalBusiness schema)
+- `app/sitemap.ts`
+- `app/robots.ts`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Quote + review integrations
+- `app/api/quote/route.ts`
+- `lib/quote.ts` (adapter for future email/CRM wiring)
+- `app/api/google-reviews/route.ts`
+- `lib/google-reviews.ts`
+
+## API Endpoints
+
+- `POST /api/quote`
+  - Validates fields server-side
+  - Uses adapter pattern for easy email/CRM integration
+
+- `GET /api/google-reviews`
+  - Fetches Google Places API (New) Place Details server-side
+  - Never exposes API key to the browser
+  - Returns fallback testimonial data if unavailable
+
+## Notes for Future Integrations
+
+- Replace `ConsoleQuoteAdapter` in `lib/quote.ts` with:
+  - Email provider (Resend/SendGrid/etc.), or
+  - CRM webhook adapter
+- Keep the API route contract unchanged so frontend form logic remains stable.

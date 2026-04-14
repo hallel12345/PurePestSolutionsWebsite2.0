@@ -1,26 +1,34 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fbfdfa;
+  --foreground: #16261f;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-manrope);
+  --font-display: var(--font-sora);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-manrope), sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-sora), sans-serif;
+}
+
+.input {
+  @apply w-full rounded-xl border border-[#d3e2d8] bg-white px-3 py-2.5 text-sm text-[#16261f] outline-none transition focus:border-[#6ec94f] focus:ring-2 focus:ring-[#6ec94f]/25;
+}
+
+.section-shell {
+  @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
 }
