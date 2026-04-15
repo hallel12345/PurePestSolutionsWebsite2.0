@@ -250,30 +250,6 @@ export const services: Service[] = [
     ],
     cta: "Reclaim your yard with targeted mosquito control.",
   },
-  {
-    slug: "bed-bug-control",
-    name: "Bed Bug Control",
-    shortDescription:
-      "Discreet, thorough bed bug treatment and follow-up strategy.",
-    intro:
-      "Bed bug infestations require precision and consistency. We provide clear prep guidance, targeted treatment, and structured follow-up so you can resolve the issue with confidence.",
-    whatWeHandle: [
-      "Early-stage and established bed bug infestations",
-      "Bedrooms, furniture, and adjacent hiding zones",
-      "Multi-room and repeat-activity scenarios",
-    ],
-    whatToExpect: [
-      "Inspection with scope assessment",
-      "Detailed prep checklist before service",
-      "Treatment and follow-up verification steps",
-    ],
-    safetyNotes: [
-      "We explain prep and post-treatment expectations clearly",
-      "Work is handled discreetly and professionally",
-      "Documentation is provided for property records",
-    ],
-    cta: "Get a focused bed bug treatment plan that works.",
-  },
 ];
 
 export const stateAreas = [
@@ -427,7 +403,6 @@ export const pestsWeHandle = [
   "Rodents",
   "Termites",
   "Mosquitoes",
-  "Bed Bugs",
   "Occasional Invaders",
 ];
 

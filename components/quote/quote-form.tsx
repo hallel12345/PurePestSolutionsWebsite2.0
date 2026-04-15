@@ -19,24 +19,25 @@ export function QuoteForm({ compact = false }: { compact?: boolean }) {
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [message, setMessage] = useState("");
-  const [selectedService, setSelectedService] = useState(services[0]?.name ?? "");
+  const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [urgency, setUrgency] = useState<(typeof urgencyOptions)[number]>("Routine");
 
   const completion = useMemo(() => {
-    const values = [name, phone, email, address, city, message, selectedService];
-    const completed = values.filter((value) => value.trim().length > 0).length;
+    const values = [name, phone, email, address, city, message];
+    const completedBase = values.filter((value) => value.trim().length > 0).length;
+    const completed = completedBase + (selectedServices.length > 0 ? 1 : 0);
     return {
       completed,
-      total: values.length,
-      percent: Math.round((completed / values.length) * 100),
+      total: values.length + 1,
+      percent: Math.round((completed / (values.length + 1)) * 100),
     };
-  }, [name, phone, email, address, city, message, selectedService]);
+  }, [name, phone, email, address, city, message, selectedServices]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!selectedService) {
-      setStatus({ type: "error", message: "Select a service to continue." });
+    if (!selectedServices.length) {
+      setStatus({ type: "error", message: "Select at least one service to continue." });
       return;
     }
 
@@ -48,7 +49,7 @@ export function QuoteForm({ compact = false }: { compact?: boolean }) {
       email,
       address,
       city,
-      serviceNeeded: selectedService,
+      serviceNeeded: selectedServices.join(", "),
       message: `${message}\n\nUrgency: ${urgency}`,
     };
 
@@ -79,7 +80,7 @@ export function QuoteForm({ compact = false }: { compact?: boolean }) {
       setAddress("");
       setCity("");
       setMessage("");
-      setSelectedService(services[0]?.name ?? "");
+      setSelectedServices([]);
       setUrgency("Routine");
     } catch {
       setStatus({
@@ -110,50 +111,6 @@ export function QuoteForm({ compact = false }: { compact?: boolean }) {
           className="h-full rounded-full bg-gradient-to-r from-[#56b93b] to-[#81d968] transition-all duration-500"
           style={{ width: `${completion.percent}%` }}
         />
-      </div>
-
-      <div className="mt-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#57796a]">Select Service</p>
-        <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
-          {services.slice(0, 9).map((service) => {
-            const active = selectedService === service.name;
-            return (
-              <button
-                key={service.slug}
-                type="button"
-                onClick={() => setSelectedService(service.name)}
-                className={`rounded-xl border px-3 py-2 text-left text-xs font-semibold transition sm:text-sm ${
-                  active
-                    ? "border-[#66c74a] bg-[#ebf8e7] text-[#20452f] shadow-[0_8px_20px_-14px_rgba(39,98,43,0.7)]"
-                    : "border-[#d6e4dc] bg-white text-[#4b6659] hover:border-[#91d77c] hover:bg-[#f7fcf6]"
-                }`}
-              >
-                {service.name}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="mt-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#57796a]">Urgency</p>
-        <div className="mt-2 inline-flex rounded-full border border-[#d7e5dd] bg-[#f6faf7] p-1">
-          {urgencyOptions.map((option) => {
-            const active = option === urgency;
-            return (
-              <button
-                key={option}
-                type="button"
-                onClick={() => setUrgency(option)}
-                className={`rounded-full px-3 py-1.5 text-xs font-semibold transition sm:text-sm ${
-                  active ? "bg-[#63c543] text-[#0d1e13]" : "text-[#4a6458]"
-                }`}
-              >
-                {option}
-              </button>
-            );
-          })}
-        </div>
       </div>
 
       <div className={`mt-4 grid gap-3 ${compact ? "" : "sm:grid-cols-2"}`}>
@@ -207,6 +164,56 @@ export function QuoteForm({ compact = false }: { compact?: boolean }) {
           value={message}
           onChange={(event) => setMessage(event.target.value)}
         />
+      </div>
+
+      <div className="mt-5">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#57796a]">Select Services (choose all that apply)</p>
+        <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
+          {services.map((service) => {
+            const active = selectedServices.includes(service.name);
+            return (
+              <button
+                key={service.slug}
+                type="button"
+                onClick={() =>
+                  setSelectedServices((current) =>
+                    current.includes(service.name)
+                      ? current.filter((name) => name !== service.name)
+                      : [...current, service.name],
+                  )
+                }
+                className={`rounded-xl border px-3 py-2 text-left text-xs font-semibold transition sm:text-sm ${
+                  active
+                    ? "border-[#66c74a] bg-[#ebf8e7] text-[#20452f] shadow-[0_8px_20px_-14px_rgba(39,98,43,0.7)]"
+                    : "border-[#d6e4dc] bg-white text-[#4b6659] hover:border-[#91d77c] hover:bg-[#f7fcf6]"
+                }`}
+              >
+                {service.name}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="mt-4">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#57796a]">Urgency</p>
+        <div className="mt-2 inline-flex rounded-full border border-[#d7e5dd] bg-[#f6faf7] p-1">
+          {urgencyOptions.map((option) => {
+            const active = option === urgency;
+            return (
+              <button
+                key={option}
+                type="button"
+                onClick={() => setUrgency(option)}
+                className={`rounded-full px-3 py-1.5 text-xs font-semibold transition sm:text-sm ${
+                  active ? "bg-[#63c543] text-[#0d1e13]" : "text-[#4a6458]"
+                }`}
+              >
+                {option}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <button
