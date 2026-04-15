@@ -196,7 +196,7 @@ export default async function HomePage() {
                 href={`tel:${siteConfig.phoneHref}`}
                 className="rounded-full bg-[#63c543] px-5 py-2.5 text-sm font-semibold text-[#102116]"
               >
-                Call {siteConfig.phoneDisplay}
+                {siteConfig.phoneDisplay}
               </a>
               <a
                 href={`sms:${siteConfig.phoneHref}`}

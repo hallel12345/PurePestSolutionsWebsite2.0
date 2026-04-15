@@ -21,9 +21,10 @@ export type City = {
 export const siteConfig = {
   companyName: "Pure Pest Solutions",
   domain: "pure-pest.com",
-  phoneDisplay: "(801) 686-8124",
+  phoneDisplay: "Call Now",
   phoneHref: "+18016868124",
-  smsDisplay: "Text us at (801) 686-8124",
+  phoneSchema: "+1-801-686-8124",
+  smsDisplay: "Text Us",
   email: "contact@purepestutah.com",
   address: "1185 N Washington Blvd, Ogden, UT 84404",
   hours: [

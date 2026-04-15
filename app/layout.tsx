@@ -46,7 +46,7 @@ export default function RootLayout({
     "@type": "LocalBusiness",
     name: siteConfig.companyName,
     image: `${baseUrl}/images/truck-side.jpeg`,
-    telephone: siteConfig.phoneDisplay,
+    telephone: siteConfig.phoneSchema,
     email: siteConfig.email,
     address: {
       "@type": "PostalAddress",

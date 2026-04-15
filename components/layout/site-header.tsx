@@ -72,7 +72,7 @@ export function SiteHeader() {
               href={`tel:${siteConfig.phoneHref}`}
               className="rounded-full border border-white/20 px-4 py-2 text-center text-sm font-semibold"
             >
-              Call {siteConfig.phoneDisplay}
+              {siteConfig.phoneDisplay}
             </a>
             <Link
               href="/contact"

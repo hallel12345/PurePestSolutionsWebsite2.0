@@ -45,7 +45,7 @@ export default function PrivacyPolicyPage() {
         <section>
           <h2 className="text-xl font-semibold text-[#183025]">5. Contact</h2>
           <p>
-            For privacy requests, contact {siteConfig.companyName} at <a href={`mailto:${siteConfig.email}`} className="text-[#3b7a3b]">{siteConfig.email}</a> or {siteConfig.phoneDisplay}.
+            For privacy requests, contact {siteConfig.companyName} at <a href={`mailto:${siteConfig.email}`} className="text-[#3b7a3b]">{siteConfig.email}</a> or call us now.
           </p>
         </section>
       </article>

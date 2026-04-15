@@ -77,7 +77,7 @@ export default function CityPage({ params }: { params: { state: string; city: st
             href={`tel:${siteConfig.phoneHref}`}
             className="rounded-full bg-[#63c543] px-5 py-2.5 text-sm font-semibold text-[#122216]"
           >
-            Call {siteConfig.phoneDisplay}
+            {siteConfig.phoneDisplay}
           </a>
           <Link href="/contact" className="rounded-full border border-[#63c543] px-5 py-2.5 text-sm font-semibold text-[#2f6036]">
             Get a Free Quote

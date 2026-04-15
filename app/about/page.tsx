@@ -28,7 +28,7 @@ export default function AboutPage() {
               href={`tel:${siteConfig.phoneHref}`}
               className="rounded-full bg-[#63c543] px-5 py-2.5 text-sm font-semibold text-[#0f1d14]"
             >
-              Call {siteConfig.phoneDisplay}
+              {siteConfig.phoneDisplay}
             </a>
             <Link
               href="/contact"
