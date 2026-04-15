@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import { services } from "@/data/site-content";
 
 type Status =
@@ -9,22 +9,47 @@ type Status =
   | { type: "success"; message: string }
   | { type: "error"; message: string };
 
+const urgencyOptions = ["Routine", "Soon", "Urgent"] as const;
+
 export function QuoteForm({ compact = false }: { compact?: boolean }) {
   const [status, setStatus] = useState<Status>({ type: "idle" });
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [message, setMessage] = useState("");
+  const [selectedService, setSelectedService] = useState(services[0]?.name ?? "");
+  const [urgency, setUrgency] = useState<(typeof urgencyOptions)[number]>("Routine");
+
+  const completion = useMemo(() => {
+    const values = [name, phone, email, address, city, message, selectedService];
+    const completed = values.filter((value) => value.trim().length > 0).length;
+    return {
+      completed,
+      total: values.length,
+      percent: Math.round((completed / values.length) * 100),
+    };
+  }, [name, phone, email, address, city, message, selectedService]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (!selectedService) {
+      setStatus({ type: "error", message: "Select a service to continue." });
+      return;
+    }
+
     setStatus({ type: "loading" });
 
-    const formData = new FormData(event.currentTarget);
     const payload = {
-      name: String(formData.get("name") ?? ""),
-      phone: String(formData.get("phone") ?? ""),
-      email: String(formData.get("email") ?? ""),
-      address: String(formData.get("address") ?? ""),
-      city: String(formData.get("city") ?? ""),
-      serviceNeeded: String(formData.get("serviceNeeded") ?? ""),
-      message: String(formData.get("message") ?? ""),
+      name,
+      phone,
+      email,
+      address,
+      city,
+      serviceNeeded: selectedService,
+      message: `${message}\n\nUrgency: ${urgency}`,
     };
 
     try {
@@ -48,7 +73,14 @@ export function QuoteForm({ compact = false }: { compact?: boolean }) {
         type: "success",
         message: data.message ?? "Thanks. We will contact you soon.",
       });
-      event.currentTarget.reset();
+      setName("");
+      setPhone("");
+      setEmail("");
+      setAddress("");
+      setCity("");
+      setMessage("");
+      setSelectedService(services[0]?.name ?? "");
+      setUrgency("Routine");
     } catch {
       setStatus({
         type: "error",
@@ -62,34 +94,118 @@ export function QuoteForm({ compact = false }: { compact?: boolean }) {
       onSubmit={handleSubmit}
       className="rounded-2xl border border-[#dbe8df] bg-white p-5 shadow-[0_20px_45px_-30px_rgba(17,35,26,0.6)] sm:p-6"
     >
-      <h3 className="text-xl font-semibold text-[#15291f]">Get a Free Quote</h3>
-      <p className="mt-1 text-sm text-[#486256]">Quick response from our local team.</p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h3 className="text-xl font-semibold text-[#15291f]">Get a Free Quote</h3>
+          <p className="mt-1 text-sm text-[#486256]">Quick response from our local team.</p>
+        </div>
+        <div className="min-w-[120px] rounded-xl border border-[#d9e6de] bg-[#f5faf7] px-3 py-2 text-right">
+          <p className="text-[11px] uppercase tracking-[0.16em] text-[#648073]">Quote Ready</p>
+          <p className="text-sm font-semibold text-[#244335]">{completion.percent}%</p>
+        </div>
+      </div>
+
+      <div className="mt-4 h-2 overflow-hidden rounded-full bg-[#e7f0ea]">
+        <div
+          className="h-full rounded-full bg-gradient-to-r from-[#56b93b] to-[#81d968] transition-all duration-500"
+          style={{ width: `${completion.percent}%` }}
+        />
+      </div>
+
+      <div className="mt-5">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#57796a]">Select Service</p>
+        <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
+          {services.slice(0, 9).map((service) => {
+            const active = selectedService === service.name;
+            return (
+              <button
+                key={service.slug}
+                type="button"
+                onClick={() => setSelectedService(service.name)}
+                className={`rounded-xl border px-3 py-2 text-left text-xs font-semibold transition sm:text-sm ${
+                  active
+                    ? "border-[#66c74a] bg-[#ebf8e7] text-[#20452f] shadow-[0_8px_20px_-14px_rgba(39,98,43,0.7)]"
+                    : "border-[#d6e4dc] bg-white text-[#4b6659] hover:border-[#91d77c] hover:bg-[#f7fcf6]"
+                }`}
+              >
+                {service.name}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="mt-4">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#57796a]">Urgency</p>
+        <div className="mt-2 inline-flex rounded-full border border-[#d7e5dd] bg-[#f6faf7] p-1">
+          {urgencyOptions.map((option) => {
+            const active = option === urgency;
+            return (
+              <button
+                key={option}
+                type="button"
+                onClick={() => setUrgency(option)}
+                className={`rounded-full px-3 py-1.5 text-xs font-semibold transition sm:text-sm ${
+                  active ? "bg-[#63c543] text-[#0d1e13]" : "text-[#4a6458]"
+                }`}
+              >
+                {option}
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       <div className={`mt-4 grid gap-3 ${compact ? "" : "sm:grid-cols-2"}`}>
-        <input name="name" placeholder="Full name" required className="input" />
-        <input name="phone" placeholder="Phone" required className="input" />
-        <input name="email" type="email" placeholder="Email" required className="input" />
-        <input name="city" placeholder="City" required className="input" />
+        <input
+          name="name"
+          placeholder="Full name"
+          required
+          className="input"
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+        />
+        <input
+          name="phone"
+          placeholder="Phone"
+          required
+          className="input"
+          value={phone}
+          onChange={(event) => setPhone(event.target.value)}
+        />
+        <input
+          name="email"
+          type="email"
+          placeholder="Email"
+          required
+          className="input"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+        />
+        <input
+          name="city"
+          placeholder="City"
+          required
+          className="input"
+          value={city}
+          onChange={(event) => setCity(event.target.value)}
+        />
         <input
           name="address"
           placeholder="Service address"
           required
           className={`input ${compact ? "" : "sm:col-span-2"}`}
+          value={address}
+          onChange={(event) => setAddress(event.target.value)}
         />
-        <select name="serviceNeeded" required className={`input ${compact ? "" : "sm:col-span-2"}`}>
-          <option value="">Service needed</option>
-          {services.map((service) => (
-            <option key={service.slug} value={service.name}>
-              {service.name}
-            </option>
-          ))}
-        </select>
         <textarea
           name="message"
           placeholder="Tell us what you're seeing"
           required
           rows={4}
           className={`input ${compact ? "" : "sm:col-span-2"}`}
+          value={message}
+          onChange={(event) => setMessage(event.target.value)}
         />
       </div>
 
