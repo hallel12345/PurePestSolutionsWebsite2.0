@@ -21,10 +21,66 @@ export interface QuoteDeliveryAdapter {
   send(submission: QuoteSubmission): Promise<QuoteDeliveryResult>;
 }
 
+function formatQuoteText(submission: QuoteSubmission) {
+  return [
+    "New Pure Pest Solutions Quote Request",
+    "",
+    `Name: ${submission.name}`,
+    `Phone: ${submission.phone}`,
+    `Email: ${submission.email}`,
+    `Address: ${submission.address}`,
+    `City: ${submission.city}`,
+    `Service(s): ${submission.serviceNeeded}`,
+    "",
+    "Message:",
+    submission.message,
+  ].join("\n");
+}
+
 class ConsoleQuoteAdapter implements QuoteDeliveryAdapter {
   async send(submission: QuoteSubmission): Promise<QuoteDeliveryResult> {
-    // Replace this adapter with an email provider or CRM webhook integration.
-    console.info("[QUOTE_SUBMISSION]", submission);
+    console.info("[QUOTE_SUBMISSION_FALLBACK]", submission);
+
+    return {
+      ok: true,
+      message: "Quote request received. Our team will contact you shortly.",
+    };
+  }
+}
+
+class ResendQuoteAdapter implements QuoteDeliveryAdapter {
+  constructor(
+    private readonly apiKey: string,
+    private readonly toEmail: string,
+    private readonly fromEmail: string,
+  ) {}
+
+  async send(submission: QuoteSubmission): Promise<QuoteDeliveryResult> {
+    const text = formatQuoteText(submission);
+
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: this.fromEmail,
+        to: [this.toEmail],
+        reply_to: submission.email,
+        subject: `New Quote Request - ${submission.name}`,
+        text,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("[RESEND_QUOTE_ERROR]", errorText);
+      return {
+        ok: false,
+        message: "We could not send your quote right now. Please call us directly.",
+      };
+    }
 
     return {
       ok: true,
@@ -34,5 +90,13 @@ class ConsoleQuoteAdapter implements QuoteDeliveryAdapter {
 }
 
 export function getQuoteDeliveryAdapter(): QuoteDeliveryAdapter {
+  const resendApiKey = process.env.RESEND_API_KEY;
+  const quoteEmailTo = process.env.QUOTE_EMAIL_TO;
+  const quoteEmailFrom = process.env.QUOTE_EMAIL_FROM;
+
+  if (resendApiKey && quoteEmailTo && quoteEmailFrom) {
+    return new ResendQuoteAdapter(resendApiKey, quoteEmailTo, quoteEmailFrom);
+  }
+
   return new ConsoleQuoteAdapter();
 }

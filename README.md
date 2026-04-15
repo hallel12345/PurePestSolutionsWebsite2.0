@@ -22,6 +22,9 @@ npm install
 ```bash
 GOOGLE_MAPS_API_KEY=your_server_side_google_maps_api_key
 GOOGLE_PLACE_ID=ChIJbwQKyHTyQ64RsMoxAg7FTwc
+RESEND_API_KEY=your_resend_api_key
+QUOTE_EMAIL_TO=you@yourdomain.com
+QUOTE_EMAIL_FROM=quotes@yourdomain.com
 ```
 
 3. Run dev server:
@@ -48,6 +51,9 @@ npm run build
 4. In Project Settings > Environment Variables, add:
    - `GOOGLE_MAPS_API_KEY`
    - `GOOGLE_PLACE_ID` with value `ChIJbwQKyHTyQ64RsMoxAg7FTwc`
+   - `RESEND_API_KEY`
+   - `QUOTE_EMAIL_TO`
+   - `QUOTE_EMAIL_FROM`
 5. Deploy.
 6. After deploy, verify:
    - Homepage quote form submits successfully.
@@ -83,7 +89,7 @@ npm run build
 
 ### Quote + review integrations
 - `app/api/quote/route.ts`
-- `lib/quote.ts` (adapter for future email/CRM wiring)
+- `lib/quote.ts` (Resend email adapter + fallback logger)
 - `app/api/google-reviews/route.ts`
 - `lib/google-reviews.ts`
 
@@ -91,16 +97,15 @@ npm run build
 
 - `POST /api/quote`
   - Validates fields server-side
-  - Uses adapter pattern for easy email/CRM integration
+  - Sends quote emails through Resend when env vars are present
+  - Falls back to server logs if email env vars are missing
 
 - `GET /api/google-reviews`
   - Fetches Google Places API (New) Place Details server-side
   - Never exposes API key to the browser
   - Returns fallback testimonial data if unavailable
 
-## Notes for Future Integrations
+## Notes
 
-- Replace `ConsoleQuoteAdapter` in `lib/quote.ts` with:
-  - Email provider (Resend/SendGrid/etc.), or
-  - CRM webhook adapter
+- `QUOTE_EMAIL_FROM` must be a verified sender/domain in Resend.
 - Keep the API route contract unchanged so frontend form logic remains stable.
