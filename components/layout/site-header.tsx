@@ -15,8 +15,9 @@ export function SiteHeader() {
           <Image
             src="/brand/logo-wordmark.png"
             alt="Pure Pest Solutions"
-            width={140}
-            height={42}
+            width={200}
+            height={60}
+            className="h-12 w-auto sm:h-14"
             priority
           />
         </Link>
