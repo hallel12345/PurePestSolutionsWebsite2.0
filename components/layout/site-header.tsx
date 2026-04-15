@@ -10,14 +10,14 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0f1714]/95 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-3" aria-label="Go to homepage">
           <Image
             src="/brand/logo-wordmark.png"
             alt="Pure Pest Solutions"
-            width={200}
-            height={60}
-            className="h-12 w-auto sm:h-14"
+            width={280}
+            height={84}
+            className="h-16 w-auto sm:h-20"
             priority
           />
         </Link>
