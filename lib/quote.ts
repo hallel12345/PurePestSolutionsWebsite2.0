@@ -91,8 +91,8 @@ class ResendQuoteAdapter implements QuoteDeliveryAdapter {
 
 export function getQuoteDeliveryAdapter(): QuoteDeliveryAdapter {
   const resendApiKey = process.env.RESEND_API_KEY;
-  const quoteEmailTo = process.env.QUOTE_EMAIL_TO;
-  const quoteEmailFrom = process.env.QUOTE_EMAIL_FROM;
+  const quoteEmailTo = process.env.QUOTE_EMAIL_TO ?? "purepest.ut@gmail.com";
+  const quoteEmailFrom = process.env.QUOTE_EMAIL_FROM ?? "purepest.ut@gmail.com";
 
   if (resendApiKey && quoteEmailTo && quoteEmailFrom) {
     return new ResendQuoteAdapter(resendApiKey, quoteEmailTo, quoteEmailFrom);

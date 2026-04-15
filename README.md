@@ -23,8 +23,8 @@ npm install
 GOOGLE_MAPS_API_KEY=your_server_side_google_maps_api_key
 GOOGLE_PLACE_ID=ChIJbwQKyHTyQ64RsMoxAg7FTwc
 RESEND_API_KEY=your_resend_api_key
-QUOTE_EMAIL_TO=you@yourdomain.com
-QUOTE_EMAIL_FROM=quotes@yourdomain.com
+QUOTE_EMAIL_TO=purepest.ut@gmail.com
+QUOTE_EMAIL_FROM=purepest.ut@gmail.com
 ```
 
 3. Run dev server:
